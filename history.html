@@ -13,7 +13,7 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial, "Noto Sans Devanagari", sans-serif;
     background: #f4f7fb;
     color: #222;
 }
@@ -30,11 +30,15 @@ header h1 {
     font-size: 30px;
 }
 
+header p {
+    font-size: 17px;
+}
+
 .search {
     width: 90%;
     max-width: 550px;
     padding: 14px;
-    margin-top: 15px;
+    margin-top: 12px;
     border: none;
     border-radius: 12px;
     font-size: 16px;
@@ -47,20 +51,32 @@ header h1 {
     padding: 25px 15px;
 }
 
-.back {
+/* Navigation */
+.navigation {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.nav-button {
     display: inline-block;
     background: white;
     color: #2563eb;
-    padding: 10px 16px;
-    border-radius: 9px;
+    padding: 11px 17px;
+    border-radius: 10px;
     text-decoration: none;
-    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    font-weight: bold;
 }
 
-h2 {
+/* Title */
+.title {
     text-align: center;
+    margin-bottom: 25px;
 }
 
+/* Chapters */
 .chapters {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -70,16 +86,18 @@ h2 {
 .chapter {
     background: white;
     padding: 22px;
-    border-radius: 15px;
+    border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.10);
 }
 
 .chapter h3 {
     margin-top: 0;
+    color: #7c3aed;
 }
 
 .chapter p {
     color: #666;
+    min-height: 50px;
 }
 
 .button {
@@ -87,16 +105,48 @@ h2 {
     background: #2563eb;
     color: white;
     text-decoration: none;
-    padding: 10px 16px;
-    border-radius: 8px;
+    padding: 10px 17px;
+    border-radius: 9px;
+    font-weight: bold;
+}
+
+.button:hover {
+    opacity: 0.9;
+}
+
+/* Advertisement space */
+.ad-box {
+    margin: 30px 0;
+    padding: 20px;
+    text-align: center;
+    background: white;
+    border: 2px dashed #aaa;
+    border-radius: 12px;
+    color: #777;
 }
 
 footer {
-    margin-top: 30px;
-    padding: 20px;
-    text-align: center;
     background: #111827;
     color: white;
+    text-align: center;
+    padding: 22px;
+    margin-top: 30px;
+}
+
+/* Mobile */
+@media(max-width:600px) {
+
+    header h1 {
+        font-size: 24px;
+    }
+
+    .container {
+        padding: 20px 12px;
+    }
+
+    .chapter {
+        padding: 18px;
+    }
 }
 </style>
 </head>
@@ -120,67 +170,180 @@ onkeyup="searchChapters()">
 
 <div class="container">
 
-<a class="button" href="history-chapter1.html">Notes पढ़ें</a>
+<!-- Navigation -->
+<div class="navigation">
 
-<h2>📚 सभी Chapters</h2>
+<a class="nav-button" href="index.html">
+🏠 Home पर जाएँ
+</a>
+
+</div>
+
+<h2 class="title">📚 इतिहास के सभी Chapters</h2>
 
 <div class="chapters" id="chapterList">
 
-<div class="chapter">
-<h3>Chapter 1</h3>
-<p>यूरोप में राष्ट्रवाद का उदय</p>
-<a class="button" href="#">Notes पढ़ें</a>
-</div>
+<!-- Chapter 1 -->
 
 <div class="chapter">
-<h3>Chapter 2</h3>
-<p>समाजवाद, साम्यवाद और रूस की क्रांति</p>
-<a class="button" href="#">Notes पढ़ें</a>
+
+<h3>📖 Chapter 1</h3>
+
+<p>
+यूरोप में राष्ट्रवाद : उदय और विकास
+</p>
+
+<a class="button" href="history-chapter1.html">
+📚 Notes पढ़ें
+</a>
+
 </div>
+
+
+<!-- Chapter 2 -->
 
 <div class="chapter">
-<h3>Chapter 3</h3>
-<p>हिंदचीन में उपनिवेशवाद और राष्ट्रवाद</p>
-<a class="button" href="#">Notes पढ़ें</a>
+
+<h3>📖 Chapter 2</h3>
+
+<p>
+समाजवाद, साम्यवाद और रूस की क्रांति
+</p>
+
+<a class="button" href="#">
+📚 Notes जल्द आएँगे
+</a>
+
 </div>
+
+
+<!-- Chapter 3 -->
 
 <div class="chapter">
-<h3>Chapter 4</h3>
-<p>भारत में राष्ट्रवाद</p>
-<a class="button" href="#">Notes पढ़ें</a>
+
+<h3>📖 Chapter 3</h3>
+
+<p>
+हिंदचीन में उपनिवेशवाद और राष्ट्रवाद
+</p>
+
+<a class="button" href="#">
+📚 Notes जल्द आएँगे
+</a>
+
 </div>
+
+
+<!-- Chapter 4 -->
 
 <div class="chapter">
-<h3>Chapter 5</h3>
-<p>औद्योगीकरण का युग</p>
-<a class="button" href="#">Notes पढ़ें</a>
+
+<h3>📖 Chapter 4</h3>
+
+<p>
+भारत में राष्ट्रवाद
+</p>
+
+<a class="button" href="#">
+📚 Notes जल्द आएँगे
+</a>
+
 </div>
+
+
+<!-- Chapter 5 -->
 
 <div class="chapter">
-<h3>Chapter 6</h3>
-<p>शहरीकरण एवं शहरी जीवन</p>
-<a class="button" href="#">Notes पढ़ें</a>
+
+<h3>📖 Chapter 5</h3>
+
+<p>
+औद्योगीकरण का युग
+</p>
+
+<a class="button" href="#">
+📚 Notes जल्द आएँगे
+</a>
+
 </div>
+
+
+<!-- Chapter 6 -->
 
 <div class="chapter">
-<h3>Chapter 7</h3>
-<p>व्यापार और भूमंडलीकरण</p>
-<a class="button" href="#">Notes पढ़ें</a>
+
+<h3>📖 Chapter 6</h3>
+
+<p>
+शहरीकरण एवं शहरी जीवन
+</p>
+
+<a class="button" href="#">
+📚 Notes जल्द आएँगे
+</a>
+
 </div>
+
+
+<!-- Chapter 7 -->
 
 <div class="chapter">
-<h3>Chapter 8</h3>
-<p>प्रेस, संस्कृति और राष्ट्रवाद</p>
-<a class="button" href="#">Notes पढ़ें</a>
+
+<h3>📖 Chapter 7</h3>
+
+<p>
+व्यापार और भूमंडलीकरण
+</p>
+
+<a class="button" href="#">
+📚 Notes जल्द आएँगे
+</a>
+
 </div>
+
+
+<!-- Chapter 8 -->
+
+<div class="chapter">
+
+<h3>📖 Chapter 8</h3>
+
+<p>
+प्रेस, संस्कृति और राष्ट्रवाद
+</p>
+
+<a class="button" href="#">
+📚 Notes जल्द आएँगे
+</a>
 
 </div>
 
 </div>
+
+
+<!-- Advertisement -->
+
+<div class="ad-box">
+
+📢 Advertisement
+
+<br>
+
+<small>
+यहाँ बाद में approved advertisement दिखाई जा सकती है।
+</small>
+
+</div>
+
+</div>
+
 
 <footer>
-© 2026 Study Notes | Bihar Board Class 10
+
+© 2026 Study Notes | Class 10 Bihar Board
+
 </footer>
+
 
 <script>
 
@@ -200,10 +363,15 @@ function searchChapters() {
         chapters[i].innerText.toLowerCase();
 
         if(text.includes(input)) {
+
             chapters[i].style.display = "";
+
         } else {
+
             chapters[i].style.display = "none";
+
         }
+
     }
 }
 
