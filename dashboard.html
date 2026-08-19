@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard | Study Notes</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, "Noto Sans Devanagari", sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+header {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+    padding: 25px 15px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px 15px;
+}
+
+.top-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.top-buttons a,
+.top-buttons button {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 9px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.home {
+    background: white;
+    color: #2563eb;
+}
+
+.logout {
+    background: #dc2626;
+    color: white;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #4f46e5;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 13px;
+    margin: 7px 0 14px;
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    font-size: 15px;
+}
+
+textarea {
+    min-height: 180px;
+    resize: vertical;
+}
+
+.main-button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 13px 20px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.status {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #f3f4f6;
+}
+
+.note {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-top: 12px;
+    border-radius: 10px;
+}
+
+.note h3 {
+    margin-top: 0;
+}
+
+.note button {
+    padding: 8px 12px;
+    margin: 5px 5px 0 0;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.edit {
+    background: #f59e0b;
+    color: white;
+}
+
+.delete {
+    background: #dc2626;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+small {
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🔐 Study Notes Admin Dashboard</h1>
+    <p>केवल Admin के लिए</p>
+</header>
+
+<div class="container">
+
+<div class="top-buttons">
+
+<a class="home" href="index.html">
+🏠 Website खोलें
+</a>
+
+<button class="logout" onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
+
+
+<!-- Add / Edit Note -->
+
+<div class="card">
+
+<h2>➕ नया Note जोड़ें</h2>
+
+<input
+    type="text"
+    id="subject"
+    placeholder="Subject जैसे: History"
+>
+
+<input
+    type="text"
+    id="chapter"
+    placeholder="Chapter जैसे: Chapter 1"
+>
+
+<input
+    type="text"
+    id="title"
+    placeholder="Note का Title"
+>
+
+<textarea
+    id="content"
+    placeholder="यहाँ अपना पूरा Notes लिखें..."
+></textarea>
+
+<label>
+📁 Image / PDF / Study Material
+</label>
+
+<input
+    type="file"
+    id="file"
+>
+
+<button
+    class="main-button"
+    onclick="saveNote()"
+>
+💾 Note Save करें
+</button>
+
+<div id="status" class="status">
+अभी कोई action नहीं हुआ।
+</div>
+
+</div>
+
+
+<!-- Existing Notes -->
+
+<div class="card">
+
+<h2>📚 आपके Notes</h2>
+
+<div id="notesList">
+Notes loading...
+</div>
+
+</div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+<script>
+
+const client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+let editingId = null;
+
+
+/* Check Login */
+
+async function checkLogin() {
+
+    const { data } = await client.auth.getSession();
+
+    if (!data.session) {
+
+        window.location.href = "admin.html";
+        return;
+    }
+
+    loadNotes();
+}
+
+
+/* Logout */
+
+async function logout() {
+
+    await client.auth.signOut();
+
+    window.location.href = "admin.html";
+}
+
+
+/* Save Note */
+
+async function saveNote() {
+
+    const subject =
+        document.getElementById("subject").value.trim();
+
+    const chapter =
+        document.getElementById("chapter").value.trim();
+
+    const title =
+        document.getElementById("title").value.trim();
+
+    const content =
+        document.getElementById("content").value.trim();
+
+    const fileInput =
+        document.getElementById("file");
+
+    const status =
+        document.getElementById("status");
+
+
+    if (!subject || !chapter || !title) {
+
+        status.innerText =
+            "❌ Subject, Chapter और Title भरना जरूरी है।";
+
+        return;
+    }
+
+
+    status.innerText =
+        "⏳ Note save हो रहा है...";
+
+
+    let fileUrl = null;
+
+
+    /* File Upload */
+
+    if (fileInput.files.length > 0) {
+
+        const file =
+            fileInput.files[0];
+
+        const fileName =
+            Date.now() + "_" +
+            file.name.replace(/\s+/g, "_");
+
+
+        const { error: uploadError } =
+            await client.storage
+            .from("study-material")
+            .upload(fileName, file);
+
+
+        if (uploadError) {
+
+            status.innerText =
+                "❌ File upload failed: " +
+                uploadError.message;
+
+            return;
+        }
+
+
+        /*
+        अभी bucket private है तो
+        public URL इस्तेमाल नहीं करेंगे।
+        File path database में रखा जाएगा।
+        */
+
+        fileUrl = fileName;
+    }
+
+
+    /* Edit Existing Note */
+
+    if (editingId) {
+
+        const { error } =
+            await client
+            .from("notes")
+            .update({
+
+                subject: subject,
+                chapter: chapter,
+                title: title,
+                content: content,
+                file_url: fileUrl
+
+            })
+            .eq("id", editingId);
+
+
+        if (error) {
+
+            status.innerText =
+                "❌ Update failed: " +
+                error.message;
+
+            return;
+        }
+
+
+        status.innerText =
+            "✅ Note successfully updated!";
+
+        editingId = null;
+
+    }
+
+
+    /* New Note */
+
+    else {
+
+        const { error } =
+            await client
+            .from("notes")
+            .insert({
+
+                subject: subject,
+                chapter: chapter,
+                title: title,
+                content: content,
+                file_url: fileUrl
+
+            });
+
+
+        if (error) {
+
+            status.innerText =
+                "❌ Save failed: " +
+                error.message;
+
+            return;
+        }
+
+
+        status.innerText =
+            "✅ नया Note successfully save हो गया!";
+    }
+
+
+    clearForm();
+
+    loadNotes();
+}
+
+
+/* Load Notes */
+
+async function loadNotes() {
+
+    const list =
+        document.getElementById("notesList");
+
+    list.innerHTML =
+        "⏳ Notes loading...";
+
+
+    const { data, error } =
+        await client
+        .from("notes")
+        .select("*")
+        .order("created_at", {
+            ascending: false
+        });
+
+
+    if (error) {
+
+        list.innerHTML =
+            "❌ Notes load नहीं हुए: " +
+            error.message;
+
+        return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+        list.innerHTML =
+            "अभी कोई Note नहीं है।";
+
+        return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    data.forEach(note => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "note";
+
+
+        div.innerHTML = `
+
+            <h3>${escapeHTML(note.title)}</h3>
+
+            <p>
+            📚 ${escapeHTML(note.subject)}
+            <br>
+            📖 ${escapeHTML(note.chapter)}
+            </p>
+
+            <small>
+            ${escapeHTML(
+                (note.content || "").substring(0, 180)
+            )}
+            </small>
+
+            <br>
+
+            <button
+                class="edit"
+                onclick="editNote(${note.id})">
+                ✏️ Edit
+            </button>
+
+            <button
+                class="delete"
+                onclick="deleteNote(${note.id})">
+                🗑️ Delete
+            </button>
+
+        `;
+
+
+        list.appendChild(div);
+
+    });
+}
+
+
+/* Edit */
+
+async function editNote(id) {
+
+    const { data, error } =
+        await client
+        .from("notes")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+
+    if (error) {
+
+        alert(
+            "Note load नहीं हुआ: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    document.getElementById("subject").value =
+        data.subject || "";
+
+    document.getElementById("chapter").value =
+        data.chapter || "";
+
+    document.getElementById("title").value =
+        data.title || "";
+
+    document.getElementById("content").value =
+        data.content || "";
+
+
+    editingId = id;
+
+
+    document.getElementById("status").innerText =
+        "✏️ Edit mode चालू है। बदलाव करके Save करें।";
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+/* Delete */
+
+async function deleteNote(id) {
+
+    if (!confirm(
+        "क्या आप यह Note delete करना चाहते हैं?"
+    )) {
+        return;
+    }
+
+
+    const { error } =
+        await client
+        .from("notes")
+        .delete()
+        .eq("id", id);
+
+
+    if (error) {
+
+        alert(
+            "❌ Delete failed: " +
+            error.message
+        );
+
+        return;
+    }
+
+
+    alert("✅ Note delete हो गया।");
+
+    loadNotes();
+}
+
+
+/* Clear form */
+
+function clearForm() {
+
+    document.getElementById("subject").value = "";
+
+    document.getElementById("chapter").value = "";
+
+    document.getElementById("title").value = "";
+
+    document.getElementById("content").value = "";
+
+    document.getElementById("file").value = "";
+
+    editingId = null;
+}
+
+
+/* Security: escape displayed text */
+
+function escapeHTML(text) {
+
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+checkLogin();
+
+</script>
+
+</body>
+</html>
